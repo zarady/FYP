@@ -1,0 +1,23 @@
+<launch>
+  <arg
+    name="model" />
+  <param
+    name="robot_description"
+    command="$(find xacro)/xacro --inorder $(find robot_ros)/urdf/RobotROS.urdf" />
+  <node
+    name="joint_state_publisher_gui"
+    pkg="joint_state_publisher_gui"
+    type="joint_state_publisher_gui"
+    output="screen" />
+  <node
+    name="robot_state_publisher"
+    pkg="robot_state_publisher"
+    type="robot_state_publisher" 
+    output="screen" />
+  <node
+    name="rviz"
+    pkg="rviz"
+    type="rviz"
+    args="-d $(find robot_ros)/urdf.rviz" 
+    output="screen" />
+</launch>

@@ -1,0 +1,20 @@
+
+<robot name="mesh_test">
+  <!-- Dummy root link -->
+  <link name="base_footprint"/>
+
+  <!-- Joint connecting base_footprint to base_link -->
+  <joint name="base_footprint_joint" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <link name="base_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://robot_ros/meshes/base_link.dae" scale="1 1 1"/>
+      </geometry>
+    </visual>
+  </link>
+</robot>

@@ -1,0 +1,31 @@
+<launch>
+  <arg name="model" default="$(find robot_ros)/urdf/RobotROS.urdf"/>
+
+  <!-- Spawn robot in Gazebo -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch"/>
+
+  <param name="robot_description" command="$(find xacro)/xacro $(arg model)"/>
+
+  <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model"
+        args="-param robot_description -urdf -model robot" />
+
+  <!-- Load controllers -->
+  <rosparam file="$(find robot_ros)/config/robot_controller.yaml" command="load"/>
+
+  <node name="controller_spawner" pkg="controller_manager"
+        type="spawner" respawn="false" output="screen" 
+        args="joint_state_controller frontwheel_velocity_controller backwheel_velocity_controller rightwheel_velocity_controller leftwheel_velocity_controller"/>
+
+  <!-- Joint state publisher -->
+  <node name="joint_state_publisher" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui"/>
+
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+
+  <!-- RViz (optional) -->
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find robot_ros)/urdf.rviz" />
+
+  <!-- Omni drive controller -->
+  <node name="omni_drive_controller" pkg="robot_ros" type="omni_drive_controller.py" output="screen" />
+
+
+</launch>
