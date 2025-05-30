@@ -1,0 +1,182 @@
+<?xml version="1.0" ?>
+<sdf version="1.6">
+  <world name="mahallahroom">
+
+    <!-- Environment -->
+    <gravity>0 0 -9.8</gravity>
+    <include><uri>model://sun</uri></include>
+    <include><uri>model://ground_plane</uri></include>
+
+    <!-- Lobby Walls -->
+    <!-- Back wall -->
+    <model name="lobby_back_wall">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>6 0.1 2.5</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>6 0.1 2.5</size></box></geometry>
+          <material><ambient>0.8 0.8 0.8 1</ambient></material>
+        </visual>
+        <pose>0 -3.05 1.25 0 0 0</pose>
+      </link>
+    </model>
+
+    <!-- Front wall: center divider + two doors -->
+    <model name="lobby_front_wall_middle">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>1 0.1 2.5</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>1 0.1 2.5</size></box></geometry>
+        </visual>
+        <pose>0 3.05 1.25 0 0 0</pose>
+      </link>
+    </model>
+
+    <model name="lobby_front_wall_left">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>2.5 0.1 2.5</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>2.5 0.1 2.5</size></box></geometry>
+        </visual>
+        <pose>-2.75 3.05 1.25 0 0 0</pose>
+      </link>
+    </model>
+
+    <model name="lobby_front_wall_right">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>2.5 0.1 2.5</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>2.5 0.1 2.5</size></box></geometry>
+        </visual>
+        <pose>2.75 3.05 1.25 0 0 0</pose>
+      </link>
+    </model>
+
+    <!-- Left wall with front-corner door -->
+    <model name="lobby_left_wall_back">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>0.1 1.5 2.5</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.1 1.5 2.5</size></box></geometry>
+        </visual>
+        <pose>-3.05 -0.75 1.25 0 0 0</pose>
+      </link>
+    </model>
+
+    <model name="lobby_left_wall_front">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>0.1 1 2.5</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.1 1 2.5</size></box></geometry>
+        </visual>
+        <pose>-3.05 1.5 1.25 0 0 0</pose>
+      </link>
+    </model>
+
+    <!-- Right wall with front-corner door -->
+    <model name="lobby_right_wall_back">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>0.1 1.5 2.5</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.1 1.5 2.5</size></box></geometry>
+        </visual>
+        <pose>3.05 -0.75 1.25 0 0 0</pose>
+      </link>
+    </model>
+
+    <model name="lobby_right_wall_front">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>0.1 1 2.5</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.1 1 2.5</size></box></geometry>
+        </visual>
+        <pose>3.05 1.5 1.25 0 0 0</pose>
+      </link>
+    </model>
+
+    <!-- Compartments -->
+    <!-- Left -->
+    <model name="compartment1">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>2 2 2.5</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>2 2 2.5</size></box></geometry>
+          <material><ambient>0.5 0.7 0.9 1</ambient></material>
+        </visual>
+        <pose>-6 0 1.25 0 0 0</pose>
+      </link>
+    </model>
+
+    <!-- Right -->
+    <model name="compartment2">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>2 2 2.5</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>2 2 2.5</size></box></geometry>
+          <material><ambient>0.9 0.5 0.5 1</ambient></material>
+        </visual>
+        <pose>6 0 1.25 0 0 0</pose>
+      </link>
+    </model>
+
+    <!-- Front Left -->
+    <model name="compartment3">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>2 2 2.5</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>2 2 2.5</size></box></geometry>
+          <material><ambient>0.7 0.9 0.6 1</ambient></material>
+        </visual>
+        <pose>-3 6 1.25 0 0 0</pose>
+      </link>
+    </model>
+
+    <!-- Front Right -->
+    <model name="compartment4">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>2 2 2.5</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>2 2 2.5</size></box></geometry>
+          <material><ambient>0.6 0.6 0.9 1</ambient></material>
+        </visual>
+        <pose>3 6 1.25 0 0 0</pose>
+      </link>
+    </model>
+
+  </world>
+</sdf>
