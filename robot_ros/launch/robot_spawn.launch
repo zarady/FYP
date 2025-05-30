@@ -2,12 +2,14 @@
   <arg name="model" default="$(find robot_ros)/urdf/RobotROS.urdf"/>
 
   <!-- Spawn robot in Gazebo -->
-  <include file="$(find gazebo_ros)/launch/empty_world.launch"/>
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find robot_ros)/worlds/room.world"/>
+  </include>
 
   <param name="robot_description" command="$(find xacro)/xacro $(arg model)"/>
 
   <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model"
-        args="-param robot_description -urdf -model robot" />
+        args="-param robot_description -urdf -model robot -x 0 -y 0 -z 0.1 -R 0 -P 0 -Y 0" />
 
   <!-- Load controllers -->
   <rosparam file="$(find robot_ros)/config/robot_controller.yaml" command="load"/>
@@ -22,7 +24,7 @@
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
 
   <!-- RViz (optional) -->
-  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find robot_ros)/urdf.rviz" />
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find robot_ros)/config/robot_config.rviz" />
 
   <!-- Omni drive controller -->
   <node name="omni_drive_controller" pkg="robot_ros" type="omni_drive_controller.py" output="screen" />

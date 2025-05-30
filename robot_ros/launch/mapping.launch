@@ -1,0 +1,60 @@
+<launch>
+
+  <!-- 🔧 Enable simulated time -->
+  <param name="use_sim_time" value="true" />
+
+  <arg name="model" default="$(find robot_ros)/urdf/RobotROS.urdf"/>
+
+  <!-- Load a custom world -->
+  <arg name="world_file" default="$(find robot_ros)/worlds/room.world"/>
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(arg world_file)"/>
+  </include>
+
+  <!-- Robot description -->
+  <param name="robot_description" command="$(find xacro)/xacro $(arg model)"/>
+
+  <!-- Spawn robot in Gazebo -->
+  <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model"
+        args="-param robot_description -urdf -model robot -x 0 -y 0 -z 0.1 -R 0 -P 0 -Y 0" />
+
+  <!-- Load controllers -->
+  <rosparam file="$(find robot_ros)/config/robot_controller.yaml" command="load"/>
+
+  <node name="controller_spawner" pkg="controller_manager"
+        type="spawner" respawn="false" output="screen" 
+        args="joint_state_controller frontwheel_velocity_controller backwheel_velocity_controller rightwheel_velocity_controller leftwheel_velocity_controller"/>
+
+  <!-- Joint state & robot state -->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+
+  <!-- RViz -->
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find robot_ros)/config/robot_config.rviz" />
+
+  <!-- Omni drive controller -->
+  <node name="omni_drive_controller" pkg="robot_ros" type="omni_drive_controller.py" output="screen" />
+
+    <!-- 🔧 Add this to fix the missing base_footprint -> base_link TF -->
+  <node pkg="tf2_ros" type="static_transform_publisher" name="footprint_to_base_link"
+        args="0 0 0.1 0 0 0 base_footprint base_link" />
+
+  <node pkg="tf2_ros" type="static_transform_publisher" name="lidar_tf" args="0 0 0.12 0 0 0 base_link lidar_link" />
+
+  <!--node pkg="tf2_ros" type="static_transform_publisher" name="odom_to_basefootprint"
+      args="0 0 0 0 0 0 odom base_footprint" /-->
+
+  <!-- SLAM Mapping using gmapping -->
+  <node name="slam_gmapping" pkg="gmapping" type="slam_gmapping" output="screen">
+    <param name="base_frame" value="base_link"/>
+    <param name="odom_frame" value="odom"/>
+    <param name="map_update_interval" value="5.0"/>
+    <param name="delta" value="0.02"/>
+    <param name="maxUrange" value="6.0"/>
+    <param name="temporalUpdate" value="0.5"/> <!-- helps with slow update -->
+    <param name="throttle_scans" value="1"/>
+    <param name="linearUpdate" value="0.2"/>
+    <param name="angularUpdate" value="0.1"/>
+    <remap from="scan" to="/scan"/>
+  </node>
+
+</launch>

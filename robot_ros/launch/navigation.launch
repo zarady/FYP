@@ -1,0 +1,66 @@
+<launch>
+
+  <!-- 🔧 Use simulated time (needed for Gazebo) -->
+  <param name="use_sim_time" value="true" />
+
+  <!-- 🔽 Load the saved map -->
+  <arg name="map_file" default="$(find robot_ros)/maps/my_room_map.yaml"/>
+  <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
+
+  <!-- 🔽 Robot description -->
+  <arg name="model" default="$(find robot_ros)/urdf/RobotROS.urdf"/>
+  <param name="robot_description" command="$(find xacro)/xacro $(arg model)"/>
+
+  <!-- 🔽 Launch the Gazebo world -->
+  <arg name="world_file" default="$(find robot_ros)/worlds/room.world"/>
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(arg world_file)"/>
+  </include>
+
+  <!-- 🔽 Spawn the robot into Gazebo -->
+  <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model"
+        args="-param robot_description -urdf -model robot -x -0 -y 0 -z 0.1 -R 0 -P 0 -Y 0" />
+
+  <!-- Match the map origin of [-100, -100, 0] by spawning at -100, -100 -->
+
+  <!-- 🔽 State publishers -->
+  <node name="joint_state_publisher" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui"/>
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
+
+  <!-- 🔽 Robot controllers -->
+  <rosparam file="$(find robot_ros)/config/robot_controller.yaml" command="load"/>
+  <node name="controller_spawner" pkg="controller_manager"
+        type="spawner" output="screen"
+        args="joint_state_controller frontwheel_velocity_controller backwheel_velocity_controller rightwheel_velocity_controller leftwheel_velocity_controller"/>
+
+  <!-- 🔽 Omni drive node -->
+  <node name="omni_drive_controller" pkg="robot_ros" type="omni_drive_controller.py" output="screen" />
+
+  <!-- 🔽 Static TFs -->
+  <node pkg="tf2_ros" type="static_transform_publisher" name="footprint_to_base_link"
+        args="0 0 0.1 0 0 0 base_footprint base_link" />
+  <node pkg="tf2_ros" type="static_transform_publisher" name="lidar_tf"
+        args="0 0 0.12 0 0 0 base_link lidar_link" />
+  <node pkg="tf2_ros" type="static_transform_publisher" name="map_to_odom" 
+      args="0 0 0 0 0 0 map odom" />
+
+  <!-- 🔽 AMCL Localization -->
+  <node name="amcl" pkg="amcl" type="amcl" output="screen">
+    <param name="odom_frame_id" value="odom"/>
+    <param name="base_frame_id" value="base_link"/>
+    <param name="global_frame_id" value="map"/>
+    <param name="update_min_d" value="0.2"/>
+    <param name="update_min_a" value="0.2"/>
+    <param name="resample_interval" value="1"/>
+    <param name="min_particles" value="500"/>
+    <param name="max_particles" value="2000"/>
+    <remap from="scan" to="/scan"/>
+  </node>
+
+  <!-- 🔽 Navigation stack (move_base) -->
+  <include file="$(find robot_ros)/launch/move_base.launch" />
+
+  <!-- 🔽 RViz -->
+  <node name="rviz" pkg="rviz" type="rviz" args="" />
+
+</launch>
