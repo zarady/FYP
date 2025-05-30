@@ -12,7 +12,7 @@
   <joint name="base_footprint_joint" type="fixed">
     <parent link="base_footprint"/>
     <child link="base_link"/>
-    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <origin xyz="0 0 0.05" rpy="0 0 0"/>
   </joint>
 
   <link
@@ -37,7 +37,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://robot_ros/meshes/base_link.dae"  scale="1 1 1" />
+          filename="package://robot_ros/meshes/base_link2.dae"  scale="1 1 1" />
       </geometry>
       <material
         name="">
@@ -51,7 +51,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://robot_ros/meshes/base_link.dae"  scale="1 1 1" />
+          filename="package://robot_ros/meshes/base_link2.dae"  scale="1 1 1" />
       </geometry>
     </collision>
   </link>
@@ -274,12 +274,12 @@
       <mass
         value="0.012622" />
       <inertia
-        ixx="0"
-        ixy="0"
-        ixz="0"
-        iyy="0"
-        iyz="0"
-        izz="0" />
+        ixx="1.1768E-06"
+        ixy="-3.2363E-14"
+        ixz="1.0854E-13"
+        iyy="1.1768E-06"
+        iyz="-1.6904E-13"
+        izz="1.7117E-06" />
     </inertial>
     <visual>
       <origin
@@ -335,10 +335,80 @@
     </actuator>
   </transmission>
 
+  <gazebo>
+    <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+      <robotNamespace>/</robotNamespace>
+    </plugin>
+  </gazebo>
 
-  <!-- ROS Control Plugin -->
-<gazebo>
-  <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so"/>
-</gazebo>
+  <!-- LiDAR Sensor -->
+  <link name="lidar_link">
+    <inertial>
+      <origin xyz="0 0 0.05" rpy="0 0 0" />
+      <mass value="0.1" />
+      <inertia
+        ixx="0.0001" ixy="0.0" ixz="0.0"
+        iyy="0.0001" iyz="0.0"
+        izz="0.0001" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.03" length="0.02"/>
+      </geometry>
+      <material name="black">
+        <color rgba="0.0 0.0 0.0 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.03" length="0.05"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <gazebo reference="lidar_link">
+    <sensor type="ray" name="laser">
+      <pose>0 0 0 0 0 0</pose>
+      <update_rate>10</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>720</samples>
+            <resolution>1</resolution>
+            <min_angle>-1.5708</min_angle>
+            <max_angle>1.5708</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.1</min>
+          <max>10.0</max>
+          <resolution>0.01</resolution>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>0.01</stddev>
+        </noise>
+      </ray>
+      <plugin name="gazebo_ros_laser_controller" filename="libgazebo_ros_laser.so">
+        <topicName>scan</topicName>
+        <frameName>lidar_link</frameName>      
+        <robotNamespace>/</robotNamespace>
+        <updateRate>10.0</updateRate>
+        <alwaysOn>true</alwaysOn>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+  <!-- Fixed joint from base_link to lidar -->
+  <joint name="lidar_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="lidar_link"/>
+    <origin xyz="0 0 0.12" rpy="0 0 0"/>
+  </joint>
+
+
 
 </robot>
